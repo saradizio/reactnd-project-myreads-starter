@@ -1,11 +1,17 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types';
 
 class Book extends Component {
+	static propTypes = {
+		book: PropTypes.object.isRequired,
+		onChangeShelf: PropTypes.func.isRequired
+	}
+
 	render = () => {
 		return (
 			<div className="book">
 				<div className="book-top">
-					<div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${this.props.book.imageLinks.smallThumbnail})` }}></div>
+					<div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${this.props.book.imageLinks && this.props.book.imageLinks.smallThumbnail ? this.props.book.imageLinks.smallThumbnail : ''})` }}></div>
 					<div className="book-shelf-changer">
 						<select defaultValue={this.props.book.shelf || "none"} onChange={(event) => this.props.onChangeShelf(this.props.book, event.target.value)}>
 							<option value="none" disabled>Move to...</option>

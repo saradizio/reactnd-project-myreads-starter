@@ -1,33 +1,41 @@
 import React from 'react'
-import * as BooksAPI from './BooksAPI'
 import { Link } from 'react-router-dom'
+import * as BooksAPI from './BooksAPI'
+import PropTypes from 'prop-types';
 import Book from './Book'
 
 class SearchBooks extends React.Component {
+	static propTypes = {
+		booksInShelves: PropTypes.array,
+		onChangeShelf: PropTypes.func.isRequired
+	}
+
 	state = {
 		query: '',
 		books: []
 	}
 
-	searchBooks = (query) => {
+	updateQuery = (query) => {
 		this.setState({ query })
-		if (query) {
-			BooksAPI.search(query).then((books) => {
-				if (books.error) {
-					this.setState({ books: [] })
-				} else {
-					console.log(books)
-					this.setState({ books })
-				}
-			})
-		} else {
-			this.setState({ books: [] })
+	}
+
+	componentDidUpdate(prevProps, prevState) {
+		if (prevState.query !== this.state.query) {
+			if (this.state.query) {
+				BooksAPI.search(this.state.query).then((books) => {
+					if (books.error) {
+						this.setState({ books: [] })
+					} else {
+						this.setState({ books })
+					}
+				})
+			} else {
+				this.setState({ books: [] })
+			}
 		}
 	}
 
 	render = () => {
-		const query = this.state.query;
-
 		return (
 			<div className="search-books">
 				<div className="search-books-bar">
@@ -36,8 +44,8 @@ class SearchBooks extends React.Component {
 						<input 
 							type="text" 
 							placeholder="Search by title or author" 
-							value={query}
-							onChange={(event) => this.searchBooks(event.target.value)}
+							value={this.state.query}
+							onChange={(event) => this.updateQuery(event.target.value)}
 						/>
 					</div>
 				</div>
