@@ -16,11 +16,26 @@ class BooksApp extends React.Component {
 		})
 	}
 
-	changeShelf(book, shelf) {
-		BooksAPI.update(book, shelf).then(() => {
-			BooksAPI.getAll().then(books => {
-				this.setState({ books })
-			})
+	changeShelf(book, newShelf) {
+		BooksAPI.update(book, newShelf).then(() => {
+			if (this.state.books.filter((b) => b.id === book.id).length > 0) {
+				// book is already in the state, we only have to update his shelf
+				this.setState((state) => ({
+					books: state.books.map((b) => {
+						if (b.id === book.id) {
+							b.shelf = newShelf
+						}
+						return b
+					})
+				}))
+			} else {
+				// book is not in the state, we have to add it
+				BooksAPI.get(book.id).then((newBook) => {
+					this.setState((state) => ({
+						books: state.books.concat([newBook])
+					}))
+				})
+			}
 		})
 	}
 
@@ -28,11 +43,10 @@ class BooksApp extends React.Component {
 		return (
 			<div className="app">
 				<Route exact path='/' render={() => (
-					// <ListBooks books={this.state.books} onChangeShelf={this.changeShelf}/>
 					<ListBooks books={this.state.books} onChangeShelf={(book, shelf) => this.changeShelf(book, shelf)}/>
 				)} />
 				<Route path='/search' render={() => (
-					<SearchBooks />
+					<SearchBooks booksInShelves={this.state.books} onChangeShelf={(book, shelf) => this.changeShelf(book, shelf)}/>
 				)} />
 			</div>
 		)

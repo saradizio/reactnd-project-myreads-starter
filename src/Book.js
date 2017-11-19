@@ -7,7 +7,7 @@ class Book extends Component {
 				<div className="book-top">
 					<div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${this.props.book.imageLinks.smallThumbnail})` }}></div>
 					<div className="book-shelf-changer">
-						<select defaultValue={this.props.book.shelf} onChange={(event) => this.props.onChangeShelf(this.props.book, event.target.value)}>
+						<select defaultValue={this.props.book.shelf || "none"} onChange={(event) => this.props.onChangeShelf(this.props.book, event.target.value)}>
 							<option value="none" disabled>Move to...</option>
 							<option value="currentlyReading">Currently Reading</option>
 							<option value="wantToRead">Want to Read</option>
@@ -17,7 +17,9 @@ class Book extends Component {
 					</div>
 				</div>
 				<div className="book-title">{this.props.book.title}</div>
-				<div className="book-authors">{this.props.book.authors}</div>
+				{(this.props.book.authors) && (
+					<div className="book-authors">{this.props.book.authors.join(', ')}</div>
+				)}
 			</div>
 		)
 	}

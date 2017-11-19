@@ -16,6 +16,7 @@ class SearchBooks extends React.Component {
 				if (books.error) {
 					this.setState({ books: [] })
 				} else {
+					console.log(books)
 					this.setState({ books })
 				}
 			})
@@ -44,7 +45,12 @@ class SearchBooks extends React.Component {
 					<ol className="books-grid">
 						{this.state.books.map((book) => (
 							<li key={book.id}>
-								<Book book={book}/>
+								{this.props.booksInShelves.forEach((bookInShelves) => {
+									if (book.id === bookInShelves.id) {
+										book.shelf = bookInShelves.shelf
+									}
+								})}
+								<Book book={book} onChangeShelf={this.props.onChangeShelf}/>
 							</li>
 						))}
 					</ol>
